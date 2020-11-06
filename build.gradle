@@ -1,0 +1,56 @@
+plugins {
+    id 'com.google.cloud.tools.jib' version '2.6.0'
+    id 'org.springframework.boot' version '2.3.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
+}
+
+group = 'de.az82.demo'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+compileJava {
+    sourceCompatibility = 15
+    targetCompatibility = 15
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-devtools'
+
+    implementation 'org.webjars:jquery:3.5.1'
+    implementation 'org.webjars:bootstrap:4.5.3'
+    implementation 'org.webjars:js-cookie:2.2.1'
+    implementation 'org.webjars:webjars-locator-core'
+
+    def lombokVersion = '1.18.16'
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    testCompileOnly "org.projectlombok:lombok:${lombokVersion}"
+    testAnnotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation 'org.springframework.security:spring-security-test'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jib {
+    from {
+        image = 'adoptopenjdk/openjdk15:jdk15u-alpine-nightly-slim'
+    }
+    to {
+        image = 'localhost:5000/az82/opa-secure-microservice'
+        tags = ['latest']
+    }
+}

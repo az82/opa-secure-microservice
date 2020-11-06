@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: opa-secure-microservice
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            clientId: ${GITHUB_CLIENT_ID}
+            clientSecret: ${GITHUB_CLIENT_SECRET}
+          google:
+            clientId: ${GOOGLE_CLIENT_ID}
+            clientSecret: ${GOOGLE_CLIENT_SECRET}
+management:
+  endpoint:
+    health:
+      show-details: NEVER

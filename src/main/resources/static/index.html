@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--suppress HtmlUnknownTarget -->
+<html lang="en">
+
+<head>
+    <title>Secure Microservice with OPA</title>
+
+    <base href="/" />
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width" />
+
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css" />
+
+    <script type="text/javascript" src="/webjars/js-cookie/js.cookie.js"></script>
+    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        // Set XSRF header on relative POST, PUT, DELETE requests
+        // noinspection JSUnusedGlobalSymbols
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (['POST', 'PUT', 'DELETE'].includes(settings.type)
+                    && !/^https?:/i.test(settings.url)) {
+                    // noinspection JSUnresolvedVariable
+                    xhr.setRequestHeader("X-XSRF-TOKEN", Cookies.get('XSRF-TOKEN'));
+                }
+            }
+        });
+
+        // Show/hide authenticated / unauthenticated blocks
+        $(document).ready(function () {
+            $.get("/user/name", function (name) {
+                $("#user").text(name);
+                updateRandomFact();
+                $(".unauthenticated").hide();
+                $(".authenticated").show();
+            });
+        });
+
+        const logout = function () {
+            $.post("/logout", function () {
+                $("#user").html('');
+                $(".unauthenticated").show();
+                $(".authenticated").hide();
+            });
+            return true;
+        }
+
+        const updateRandomFact = function () {
+            $.get("/norris/fact", function (fact) {
+                $("#randomFact").text(fact);
+            });
+            return true;
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>Secure Microservice with OPA</h1>
+        </div>
+
+        <div class="unauthenticated panel panel-primary">
+            <div class="panel-header">Not logged in</div>
+            <div class="panel-body">
+                <button onclick="location.href='/oauth2/authorization/github'" class="btn btn-primary">
+                    Login with GitHub
+                </button>
+                <button onclick="location.href='/oauth2/authorization/google'" class="btn btn-primary">
+                    Login with Google
+                </button>
+            </div>
+        </div>
+
+        <div class="authenticated panel panel-default" style="display:none">
+            <div class="panel-header">
+                Logged in as: <span id="user">Not logged in yet</span>
+            </div>
+            <div class="panel-body">
+                <button onClick="logout()" class="btn btn-danger">Logout</button>
+            </div>
+        </div>
+
+        <div class="authenticated jumbotron" style="display:none;margin-top:1em">
+            <h2>Random Chuck Norris Fact</h2>
+            <p id="randomFact">No fact yet</p>
+            <button onClick="updateRandomFact()" class="btn btn-primary">New Fact</button>
+        </div>
+    </div>
+</body>
+
+</html>
