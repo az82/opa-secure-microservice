@@ -50,7 +50,7 @@ public class OpaVoter implements AccessDecisionVoter<FilterInvocation> {
 
     @Override
     public int vote(Authentication auth, FilterInvocation filter, Collection<ConfigAttribute> attrs) {
-        HttpServletRequest request = filter.getRequest();
+        var request = filter.getRequest();
 
         return getOpaDecision(new Input(
                 request.getMethod(),
@@ -64,7 +64,7 @@ public class OpaVoter implements AccessDecisionVoter<FilterInvocation> {
         log.debug("Get decision from OPA: {}", input);
 
         try {
-            OpaResponse response = client.postForObject(
+            var response = client.postForObject(
                     opaUrl,
                     new HttpEntity<>(new OpaRequest(input)),
                     OpaResponse.class);
@@ -93,12 +93,12 @@ public class OpaVoter implements AccessDecisionVoter<FilterInvocation> {
     }
 
     private static String getRequestPath(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        return '/' + PATH_SEP_NORM_PATTERN.matcher(requestURI).replaceAll("");
+        return '/' + PATH_SEP_NORM_PATTERN.matcher(request.getRequestURI())
+                .replaceAll("");
     }
 
     private static Map<String, String> getHeaders(HttpServletRequest request) {
-        Map<String, String> headers = new HashMap<>();
+        var headers = new HashMap<String, String>();
 
         for (Enumeration<String> headerNames = request.getHeaderNames(); headerNames.hasMoreElements(); ) {
             String header = headerNames.nextElement();
