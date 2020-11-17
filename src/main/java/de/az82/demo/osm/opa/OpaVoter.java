@@ -7,6 +7,7 @@ import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.FilterInvocation;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
  * OPA Authorization voter.
  */
 @Slf4j
+@Component
 public class OpaVoter implements AccessDecisionVoter<FilterInvocation> {
 
     private static final Pattern PATH_SEP_NORM_PATTERN = Pattern.compile("(^/)|(/$)");
@@ -32,10 +34,10 @@ public class OpaVoter implements AccessDecisionVoter<FilterInvocation> {
     /**
      * Create a new instance.
      *
-     * @param opaUrl URL of the OPA instance to use.
+     * @param config OPA configuration
      */
-    public OpaVoter(String opaUrl) {
-        this.opaUrl = opaUrl;
+    public OpaVoter(OpaConfigProperties config) {
+        this.opaUrl = config.getUrl();
     }
 
     @Override

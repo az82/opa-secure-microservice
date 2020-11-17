@@ -15,3 +15,5 @@ management:
   endpoint:
     health:
       show-details: NEVER
+opa:
+  url: http://localhost:8181/v1/data/http/authz/allow
