@@ -24,20 +24,19 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // @formatter:off
         http
-// Delegate AuthZ decisions entirely to the OPA Voter
-.authorizeRequests()
-    .anyRequest()
-    // By default this also covers anonymous access (with a dedicated "anonymous" principal)
-    .authenticated()
-    .accessDecisionManager(new UnanimousBased(singletonList(new OpaVoter(OPA_URL))))
-// Expose the CSRF token as a cookie to JavaScript
-// This will fail somewhere in the future as browsers will no longer allow it
-// 
-.and().csrf().csrfTokenRepository(withHttpOnlyFalse())
-.and().logout().logoutSuccessUrl("/").permitAll()
-// Render 401 unauthorized instead of the default redirect
-.and().exceptionHandling().authenticationEntryPoint(new UnauthorizedEntryPoint())
-.and().oauth2Login();
+            // Delegate AuthZ decisions entirely to the OPA Voter
+            .authorizeRequests()
+                .anyRequest()
+                // By default this also covers anonymous access (with a dedicated "anonymous" principal)
+                .authenticated()
+                .accessDecisionManager(new UnanimousBased(singletonList(new OpaVoter(OPA_URL))))
+            // Expose the CSRF token as a cookie to JavaScript
+            // This will fail sometime in the future as browsers will no longer allow it
+            .and().csrf().csrfTokenRepository(withHttpOnlyFalse())
+            .and().logout().logoutSuccessUrl("/").permitAll()
+            // Render 401 unauthorized instead of the default redirect
+            .and().exceptionHandling().authenticationEntryPoint(new UnauthorizedEntryPoint())
+            .and().oauth2Login();
         // @formatter:on
     }
 
