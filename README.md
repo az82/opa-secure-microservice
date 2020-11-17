@@ -3,7 +3,8 @@
 ## Requirements
 
 * Java 15
-* OPA [conftest](https://github.com/open-policy-agent/conftest) (For validating the application configuration)
+* OPA [conftest](https://github.com/open-policy-agent/conftest) for validating the application configuration
+* [helm](https://helm.sh/) for deploying to Kubernetes
 
 ## Configuration
 
@@ -36,11 +37,11 @@ Start the service:
 
 ```bash
 env $(cat .env | xargs) ./gradlew bootRun
-```
+``x`
 
 The server will be listening at http://localhost:8080
 
-### Validate the Application Configuration
+## Validate the Application Configuration
 
 ```bash
 conftest -p src/main/rego/config-policy.rego test src/main/resources/application.yaml
@@ -53,6 +54,17 @@ FAIL - src/main/resources/config-policy.yaml - Google is disallowed as an identi
 
 1 test, 0 passed, 0 warnings, 1 failure, 0 exceptions
 ```
+
+## Deploy to Kubernetes
+
+This repository provides a Helm chart. To install it with the default settings
+and secrets provided in `.env` as decribed above run the following command
+
+```bash
+helm install $(echo --set $(echo $(cat .env) | tr ' ' ',')) opa-secure-microservice .
+```
+
+ 
 
 ## Copyright & License
 
