@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* Java 15+
+* Java 17+
 * OPA [conftest](https://github.com/open-policy-agent/conftest) (For validating the application configuration)
 
 ## Configuration
