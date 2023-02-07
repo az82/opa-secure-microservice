@@ -6,7 +6,10 @@
 
 * For local execution:
 * Java 17+
-* OPA [conftest](https://github.com/open-policy-agent/conftest) (For validating the application configuration)
+* [opa](https://github.com/open-policy-agent/opa) engine
+* [conftest](https://github.com/open-policy-agent/conftest) (For validating the application configuration)
+
+This readme assumes that `opa` and `conftest` are installed in the workspace directory.
 
 ### Configuration
 
@@ -50,7 +53,7 @@ GOOGLE_CLIENT_SECRET=YOUR-CREDENTIALS
 Start OPA:
 
 ```bash
-opa run -s src/main/rego/access-policy.rego
+./opa run -s src/main/rego/access-policy.rego
 ```
 
 Start the service:
@@ -64,7 +67,7 @@ The server will be listening at http://localhost:8080
 ### Validate the Application Configuration
 
 ```bash
-conftest -p src/main/rego/config-policy.rego test src/main/resources/application.yaml
+./conftest -p src/main/rego/config-policy.rego test src/main/resources/application.yaml
 ```
 
 Expected output:
@@ -77,6 +80,6 @@ FAIL - src/main/resources/config-policy.yaml - Google is disallowed as an identi
 
 ## Copyright & License
 
-Copyright 2020 Andreas Zitzelsberger, released under the [MIT License](LICENSE).
+Copyright 2023 Andreas Zitzelsberger, released under the [MIT License](LICENSE).
 
 The Gradle Wrapper is used under the Apache License, Version 2.0.
