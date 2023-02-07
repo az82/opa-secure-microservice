@@ -1,11 +1,14 @@
 # OPA Secure Microservice Demo
 
-## Requirements
+## Run and Develop Locally
 
+### Requirements
+
+* For local execution:
 * Java 17+
 * OPA [conftest](https://github.com/open-policy-agent/conftest) (For validating the application configuration)
 
-## Configuration
+### Configuration
 
 Create a `.env` file with the following content. Leave the providers you
 do not want to use blank.
@@ -17,6 +20,24 @@ GITHUB_CLIENT_SECRET=YOUR-CREDENTIALS
 GOOGLE_CLIENT_ID=YOUR-CREDENTIALS
 GOOGLE_CLIENT_SECRET=YOUR-CREDENTIALS
 ```
+
+## Run and Develop With Gitpod
+
+### Requirements
+
+* [Gitpod](https://gitpod.io) account
+
+### Configuration
+
+* In the Gitpod user settings, add environment variables for the SSO providers you want to use.
+
+| Variable Name        | Scope                         | Content          |
+|----------------------|-------------------------------|------------------|
+| GITHUB_CLIENT_ID     | az82/opa-secure-microservice  | YOUR-CREDENTIALS |
+| GITHUB_CLIENT_SECRET | az82/opa-secure-microservice  | YOUR-CREDENTIALS |
+| GOOGLE_CLIENT_ID     | az82/opa-secure-microservice  | YOUR-CREDENTIALS |
+| GOOGLE_CLIENT_SECRET | az82/opa-secure-microservice  | YOUR-CREDENTIALS |
+
 
 ## Build
 

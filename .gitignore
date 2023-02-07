@@ -4,3 +4,13 @@ build/
 
 # .env files
 .env
+
+# VSCode
+.vscode/
+# The VSCode Java Extensions use bin/ for compiled classes
+bin/
+
+# OPA executables
+/opa
+/conftest
+
