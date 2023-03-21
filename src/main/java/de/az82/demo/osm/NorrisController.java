@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 import static java.nio.file.Files.lines;
-import static java.util.stream.Collectors.toUnmodifiableList;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Provides chuck norris facts.
@@ -33,8 +33,8 @@ public class NorrisController {
 
     @SuppressWarnings("SameParameterValue")
     private static List<String> loadLines(String location) {
-        try (Stream<String> lines = lines(Paths.get(NorrisController.class.getResource(location).toURI()))) {
-            return lines.collect(toUnmodifiableList());
+        try (Stream<String> lines = lines(Paths.get(requireNonNull(NorrisController.class.getResource(location)).toURI()))) {
+            return lines.toList();
         } catch (URISyntaxException | IOException e) {
             throw new IllegalStateException(e);
         }
