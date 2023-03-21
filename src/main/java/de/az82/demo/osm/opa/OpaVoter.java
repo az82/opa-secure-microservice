@@ -18,6 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * OPA Authorization voter.
  */
@@ -27,7 +29,7 @@ public class OpaVoter implements AccessDecisionVoter<FilterInvocation> {
 
     private static final Pattern PATH_SEP_NORM_PATTERN = Pattern.compile("(^/)|(/$)");
 
-    // For production you might want to use the reactive web client
+    // For production, you might want to use the reactive web client
     private final RestTemplate client = new RestTemplate();
     private final String opaUrl;
 
@@ -62,16 +64,14 @@ public class OpaVoter implements AccessDecisionVoter<FilterInvocation> {
     }
 
     private int getOpaDecision(Input input) {
-        // For debugging. Do no log the authentication object in production
+        // For debugging. Do not log the authentication object in production
         log.debug("Get decision from OPA: {}", input);
 
         try {
-            var response = client.postForObject(
+            var response = requireNonNull(client.postForObject(
                     opaUrl,
                     new HttpEntity<>(new OpaRequest(input)),
-                    OpaResponse.class);
-            // postForObject should not be @Nullable, see implementation for details
-            assert response != null;
+                    OpaResponse.class));
 
             if (!response.isResult()) {
                 return accessDenied(input);
