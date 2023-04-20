@@ -11,9 +11,9 @@ spring:
           google:
             clientId: ${GOOGLE_CLIENT_ID}
             clientSecret: ${GOOGLE_CLIENT_SECRET}
-management:
-  endpoint:
-    health:
-      show-details: NEVER
 opa:
   url: http://localhost:8181/v1/data/http/authz/allow
+
+logging:
+  level:
+    de.az82: DEBUG

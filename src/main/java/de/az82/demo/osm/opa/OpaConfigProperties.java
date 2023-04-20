@@ -1,12 +1,11 @@
 package de.az82.demo.osm.opa;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.ConstructorBinding;
+import org.springframework.boot.context.properties.bind.ConstructorBinding;
 
 /**
  * Configuration for OPA.
  */
-@ConstructorBinding
 @ConfigurationProperties(prefix = "opa")
 class OpaConfigProperties {
 
@@ -17,6 +16,7 @@ class OpaConfigProperties {
      *
      * @param url URL pointing to an allow method, eg. {@code http://HOST/v1/data/SOME/PACKAGE/allow}
      */
+    @ConstructorBinding
     OpaConfigProperties(String url) {
         this.url = url;
     }
