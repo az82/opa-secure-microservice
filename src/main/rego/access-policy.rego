@@ -1,15 +1,14 @@
 package http.authz
 
-# Default: No access
+# Default: Only authorized access
+auth_paths := [
+    "**",
+    ]
 
 anon_paths := [
     "/",
-    "/webjars/**"
-    ]
-
-auth_paths := [
-    "/norris/fact",
-    "/user/name",
+    "/index.html",
+    "/webjars/**",
     ]
 
 allow {

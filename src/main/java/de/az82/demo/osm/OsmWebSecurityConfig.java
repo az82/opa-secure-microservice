@@ -23,11 +23,7 @@ class OsmWebSecurityConfig {
         http
             .authorizeHttpRequests()
                 // Delegate the authorization decision to OPA
-                .requestMatchers("/norris/**").access(opaAuthorizationManager)
-                // Require authentication for accessing the user details
-                .requestMatchers("/user/**").authenticated()
-                // Allow other requests
-                .anyRequest().permitAll()
+                .anyRequest().access(opaAuthorizationManager)
             .and().csrf()
                 .ignoringRequestMatchers("/login","/logout")
                 // Expose the CSRF token as a cookie to JavaScript
