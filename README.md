@@ -53,7 +53,7 @@ GOOGLE_CLIENT_SECRET=YOUR-CREDENTIALS
 Start OPA:
 
 ```bash
-./opa run -s src/main/rego/access-policy.rego
+opa run -s src/main/rego/access-policy.rego
 ```
 
 Start the service:
@@ -67,7 +67,7 @@ The server will be listening at http://localhost:8080
 ### Validate the Application Configuration
 
 ```bash
-./conftest -p src/main/rego/config-policy.rego test src/main/resources/application.yaml
+conftest -p src/main/rego/config-policy.rego test src/main/resources/application.yaml
 ```
 
 Expected output:

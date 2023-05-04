@@ -1,4 +1,5 @@
-image: gitpod/workspace-java-17:latest
+image:
+  file: .gitpod.Dockerfile
 
 vscode:
   extensions:
@@ -6,20 +7,6 @@ vscode:
     - tsandall.opa
 
 tasks:
-  - name: Download OPA
-    init: >
-      curl -L -o "opa" https://openpolicyagent.org/downloads/v0.48.0/opa_linux_amd64_static &&
-      chmod a+x opa
-  - name: Download conftest
-    init: >
-      mkdir tmp &&
-      cd tmp &&
-      curl -L -o conftest.tar.gz https://github.com/open-policy-agent/conftest/releases/download/v0.38.0/conftest_0.38.0_Linux_x86_64.tar.gz &&
-      tar xzf conftest.tar.gz &&
-      cd .. &&
-      mv tmp/conftest . &&
-      rm -r tmp &&
-      chmod a+x conftest
   - name: Initial Gradle build
     init: ./gradlew build
 
