@@ -2,7 +2,8 @@ package de.az82.demo.osm.opa;
 
 import de.az82.demo.osm.opa.OpaRequest.Input;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.AuthorizationManager;
@@ -19,14 +20,16 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import static java.util.Objects.requireNonNull;
+import static org.slf4j.event.Level.INFO;
+import static org.slf4j.event.Level.WARN;
 
 /**
  * OPA Authorization manager.
  */
-@Slf4j
 @Component
 public class OpaAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpaAuthorizationManager.class);
     private static final Pattern PATH_SEP_NORM_PATTERN = Pattern.compile("(^/)|(/$)");
 
     // For production, you might want to use the reactive web client
@@ -55,7 +58,7 @@ public class OpaAuthorizationManager implements AuthorizationManager<RequestAuth
 
     private AuthorizationDecision getOpaDecision(Input input) {
         // For debugging. Do not log the authentication object in production
-        log.debug("Get decision from OPA: {}", input);
+        LOGGER.debug("Get decision from OPA: {}", input);
 
         try {
             var response = requireNonNull(client.postForObject(
@@ -63,25 +66,20 @@ public class OpaAuthorizationManager implements AuthorizationManager<RequestAuth
                     new HttpEntity<>(new OpaRequest(input)),
                     OpaResponse.class));
 
-            if (!response.isResult()) {
-                return accessDenied(input);
-            }
-            return accessGranted(input);
+            var accessGranted = response.result();
+
+            LOGGER.atLevel(accessGranted ? INFO : WARN)
+                    .setMessage("Access {} on {} for {}")
+                    .addArgument(accessGranted ? "granted" : "denied")
+                    .addArgument(input::path)
+                    .addArgument(()-> input.auth().getName())
+                    .log();
+            return new AuthorizationDecision(accessGranted);
+
         } catch (RestClientException e) {
-            log.error("Error contacting OPA", e);
-            return accessDenied(input);
+            LOGGER.error("Error contacting OPA", e);
+            return new AuthorizationDecision(false);
         }
-    }
-
-
-    private AuthorizationDecision accessDenied(Input input) {
-        log.warn("Access denied on {} for {}", input.getPath(), input.getAuth().getName());
-        return new AuthorizationDecision(false);
-    }
-
-    private AuthorizationDecision accessGranted(Input input) {
-        log.info("Access granted on {} for {}", input.getPath(), input.getAuth().getName());
-        return new AuthorizationDecision(true);
     }
 
     private static String getRequestPath(HttpServletRequest request) {
