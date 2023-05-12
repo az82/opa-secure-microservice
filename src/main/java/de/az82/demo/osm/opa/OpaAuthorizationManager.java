@@ -28,21 +28,20 @@ import static org.slf4j.event.Level.WARN;
  */
 @Component
 public class OpaAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(OpaAuthorizationManager.class);
     private static final Pattern PATH_SEP_NORM_PATTERN = Pattern.compile("(^/)|(/$)");
-
-    // For production, you might want to use the reactive web client
-    private final RestTemplate restClient = new RestTemplate();
+    private final RestTemplate restTemplate;
     private final String opaUrl;
 
     /**
      * Create a new instance.
      *
-     * @param config OPA configuration
+     * @param config       OPA configuration
+     * @param restTemplate Spring REST template
      */
-    public OpaAuthorizationManager(OpaConfigProperties config) {
+    public OpaAuthorizationManager(OpaConfigProperties config, RestTemplate restTemplate) {
         this.opaUrl = config.url();
+        this.restTemplate = restTemplate;
     }
 
     @Override
@@ -61,7 +60,7 @@ public class OpaAuthorizationManager implements AuthorizationManager<RequestAuth
         LOGGER.debug("Get decision from OPA: {}", input);
 
         try {
-            var response = requireNonNull(restClient.postForObject(
+            var response = requireNonNull(restTemplate.postForObject(
                     opaUrl,
                     new HttpEntity<>(new OpaRequest(input)),
                     OpaResponse.class));
