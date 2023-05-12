@@ -24,6 +24,12 @@ GOOGLE_CLIENT_ID=YOUR-CREDENTIALS
 GOOGLE_CLIENT_SECRET=YOUR-CREDENTIALS
 ```
 
+For GitHub, you need to create an OAuth2 client with the homepage URL `http://localhost:8080` 
+and the authorization callback URL `http://localhost:8080/login/oauth2/code/github`.
+
+For Google, the authorization callback URL must be `http://localhost:8080/login/oauth2/code/google`. For other providers
+replace the part after `/code/` with the provider Id defined in `application.yaml`.
+
 ## Run and Develop With Gitpod
 
 ### Requirements

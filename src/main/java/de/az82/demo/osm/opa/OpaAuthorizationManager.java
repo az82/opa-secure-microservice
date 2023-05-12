@@ -33,7 +33,7 @@ public class OpaAuthorizationManager implements AuthorizationManager<RequestAuth
     private static final Pattern PATH_SEP_NORM_PATTERN = Pattern.compile("(^/)|(/$)");
 
     // For production, you might want to use the reactive web client
-    private final RestTemplate client = new RestTemplate();
+    private final RestTemplate restClient = new RestTemplate();
     private final String opaUrl;
 
     /**
@@ -42,7 +42,7 @@ public class OpaAuthorizationManager implements AuthorizationManager<RequestAuth
      * @param config OPA configuration
      */
     public OpaAuthorizationManager(OpaConfigProperties config) {
-        this.opaUrl = config.getUrl();
+        this.opaUrl = config.url();
     }
 
     @Override
@@ -51,9 +51,9 @@ public class OpaAuthorizationManager implements AuthorizationManager<RequestAuth
 
         return getOpaDecision(new Input(
                 request.getMethod(),
-                getRequestPath(request),
+                getNormalRequestPath(request),
                 getHeaders(request),
-                authentication.get()));
+                authentication.get().getName()));
     }
 
     private AuthorizationDecision getOpaDecision(Input input) {
@@ -61,7 +61,7 @@ public class OpaAuthorizationManager implements AuthorizationManager<RequestAuth
         LOGGER.debug("Get decision from OPA: {}", input);
 
         try {
-            var response = requireNonNull(client.postForObject(
+            var response = requireNonNull(restClient.postForObject(
                     opaUrl,
                     new HttpEntity<>(new OpaRequest(input)),
                     OpaResponse.class));
@@ -72,21 +72,34 @@ public class OpaAuthorizationManager implements AuthorizationManager<RequestAuth
                     .setMessage("Access {} on {} for {}")
                     .addArgument(accessGranted ? "granted" : "denied")
                     .addArgument(input::path)
-                    .addArgument(()-> input.auth().getName())
+                    .addArgument(input::principal)
                     .log();
-            return new AuthorizationDecision(accessGranted);
 
+            return new AuthorizationDecision(accessGranted);
         } catch (RestClientException e) {
             LOGGER.error("Error contacting OPA", e);
             return new AuthorizationDecision(false);
         }
     }
 
-    private static String getRequestPath(HttpServletRequest request) {
+    /**
+     * Normalize the request path so that it starts with '/' and does not end with '/'
+     *
+     * @param request HTTP request
+     * @return request path
+     */
+    private static String getNormalRequestPath(HttpServletRequest request) {
+        // Normalize the request path so that it starts with '/' and does not end with '/'
         return '/' + PATH_SEP_NORM_PATTERN.matcher(request.getRequestURI())
                 .replaceAll("");
     }
 
+    /**
+     * Get headers as a map.
+     *
+     * @param request HTTP request
+     * @return headers
+     */
     private static Map<String, String> getHeaders(HttpServletRequest request) {
         var headers = new HashMap<String, String>();
 

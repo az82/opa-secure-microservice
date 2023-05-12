@@ -18,6 +18,6 @@ allow {
 allow {
     # Spring Boot idiosyncrasy: The anonymous user is "authenticated", but can
     # be identified by the principal "anonymousUser"
-    input.auth.principal != "anonymousUser"
+    input.principal != "anonymousUser"
     glob.match(auth_paths[_], ["/"], input.path)
 }
